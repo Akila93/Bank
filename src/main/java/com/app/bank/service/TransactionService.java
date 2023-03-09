@@ -13,6 +13,7 @@ import com.app.bank.util.ModuleException;
 import com.app.bank.util.TransactionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class TransactionService {
     @Autowired
     LedgerRepository ledgerRepository;
 
+    @Transactional
     public String deposit(String accountNo) throws ModuleException {
         Optional<Account> accountOptional = accountRepository.findByAccountNo(accountNo);
         Account account = accountOptional.get();
@@ -61,6 +63,7 @@ public class TransactionService {
         return amount;
     }
 
+    @Transactional
     public String withdraw(String accountNo) throws ModuleException{
         Optional<Account> accountOptional = accountRepository.findByAccountNo(accountNo);
         Account account = accountOptional.get();
