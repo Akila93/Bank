@@ -18,9 +18,6 @@ public class Ledger {
     @Column(name = "id")
     long ledgerId;
 
-    @ManyToOne(targetEntity = Transaction.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    Transaction transaction;
-
     @ManyToOne(targetEntity = Account.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     Account account;
 
@@ -36,6 +33,10 @@ public class Ledger {
 
     @Temporal(TemporalType.DATE)
     Date lastUpdatedDate;
+
+
+    @OneToOne(targetEntity = Transaction.class, cascade = CascadeType.MERGE)
+    Transaction transaction;
 
     @PrePersist
     public void createdDate(){

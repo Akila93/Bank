@@ -30,7 +30,7 @@ public class ApplicationSimulatorService {
                 performOperation();
                 displayInfoBanner();
             } catch (Exception e) {
-                //illegal operation
+                e.printStackTrace();
             }
         } while (!"Q".equalsIgnoreCase(requestedOperation));
     }

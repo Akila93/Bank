@@ -7,6 +7,7 @@ import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "account")
@@ -25,6 +26,9 @@ public class Account {
 
     @Temporal(TemporalType.DATE)
     Date lastUpdatedDate;
+
+    @OneToMany(targetEntity = Ledger.class, mappedBy = "account")
+    List<Ledger> ledgers;
 
     @PreUpdate
     public void lastUpdatedDate(){

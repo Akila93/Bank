@@ -32,27 +32,27 @@ public class TransactionService {
         IOUtil.printBanner("Please enter the amount to deposit:");
         String amount = IOUtil.readInput();
         double amountInDouble=Double.parseDouble(amount);
+
+        Ledger ledgerRecord = new Ledger();
+        ledgerRecord.setAccount(account);
+        ledgerRecord.setOpeningBalance(account.getBalance());
+        ledgerRecord.setClosingBalance(account.getBalance()+amountInDouble);
+        ledgerRecord.setLedgerStatus(LedgerStatus.PENDING);
+        Ledger savedLedgerRecord = ledgerRepository.save(ledgerRecord);
+
+
         Transaction transaction = new Transaction();
         transaction.setTransactionAmount(amountInDouble);
         transaction.setTransactionType(TransactionType.DEPOSIT);
         transaction.setRemarks(accountNo+"_"+TransactionType.DEPOSIT+"_"+new Date().toString());
         Transaction savedTransaction = transactionRepository.save(transaction);
 
-        Ledger ledgerRecord = new Ledger();
-        ledgerRecord.setTransaction(savedTransaction);
-        ledgerRecord.setAccount(account);
-        ledgerRecord.setOpeningBalance(account.getBalance());
-        ledgerRecord.setClosingBalance(account.getBalance()+amountInDouble);
-        ledgerRecord.setLedgerStatus(LedgerStatus.PENDING);
-
-        ledgerRepository.save(ledgerRecord);
-
         account.setBalance(account.getBalance()+amountInDouble);
         accountRepository.save(account);
 
-        ledgerRecord.setLedgerStatus(LedgerStatus.SUCCESS);
-        ledgerRepository.save(ledgerRecord);
-
+        savedLedgerRecord.setLedgerStatus(LedgerStatus.SUCCESS);
+        savedLedgerRecord.setTransaction(savedTransaction);
+        ledgerRepository.save(savedLedgerRecord);
         return amount;
     }
 
@@ -62,26 +62,27 @@ public class TransactionService {
         IOUtil.printBanner("Please enter the amount to withdraw:");
         String amount = IOUtil.readInput();
         double amountInDouble=Double.parseDouble(amount);
+
+        Ledger ledgerRecord = new Ledger();
+        ledgerRecord.setAccount(account);
+        ledgerRecord.setOpeningBalance(account.getBalance());
+        ledgerRecord.setClosingBalance(account.getBalance()-amountInDouble);
+        ledgerRecord.setLedgerStatus(LedgerStatus.PENDING);
+        Ledger savedLedgerRecord = ledgerRepository.save(ledgerRecord);
+
+
         Transaction transaction = new Transaction();
         transaction.setTransactionAmount(amountInDouble);
         transaction.setTransactionType(TransactionType.WITHDRAW);
         transaction.setRemarks(accountNo+"_"+TransactionType.WITHDRAW+"_"+new Date().toString());
         Transaction savedTransaction = transactionRepository.save(transaction);
 
-        Ledger ledgerRecord = new Ledger();
-        ledgerRecord.setTransaction(savedTransaction);
-        ledgerRecord.setAccount(account);
-        ledgerRecord.setOpeningBalance(account.getBalance());
-        ledgerRecord.setClosingBalance(account.getBalance()-amountInDouble);
-        ledgerRecord.setLedgerStatus(LedgerStatus.PENDING);
-
-        ledgerRepository.save(ledgerRecord);
-
         account.setBalance(account.getBalance()-amountInDouble);
         accountRepository.save(account);
 
-        ledgerRecord.setLedgerStatus(LedgerStatus.SUCCESS);
-        ledgerRepository.save(ledgerRecord);
+        savedLedgerRecord.setLedgerStatus(LedgerStatus.SUCCESS);
+        savedLedgerRecord.setTransaction(savedTransaction);
+        ledgerRepository.save(savedLedgerRecord);
         return amount;
     }
 
