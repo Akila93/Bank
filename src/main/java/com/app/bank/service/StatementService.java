@@ -43,6 +43,7 @@ public class StatementService {
                 String record = formator.format(ledgerRecord.getLastUpdatedDate())+" | "+ledgerRecord.getTransaction().getTransactionAmount()+"  | "+ledgerRecord.getClosingBalance();
                 IOUtil.printBanner(record);
             }
+            IOUtil.printBanner("");
         }
 
     }

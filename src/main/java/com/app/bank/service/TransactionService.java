@@ -9,6 +9,8 @@ import com.app.bank.repository.AccountRepository;
 import com.app.bank.repository.LedgerRepository;
 import com.app.bank.repository.TransactionRepository;
 import com.app.bank.util.IOUtil;
+import com.app.bank.util.ModuleException;
+import com.app.bank.util.TransactionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +28,15 @@ public class TransactionService {
     @Autowired
     LedgerRepository ledgerRepository;
 
-    public String deposit(String accountNo){
+    public String deposit(String accountNo) throws ModuleException {
         Optional<Account> accountOptional = accountRepository.findByAccountNo(accountNo);
         Account account = accountOptional.get();
         IOUtil.printBanner("Please enter the amount to deposit:");
         String amount = IOUtil.readInput();
+        IOUtil.validateAmountInput(amount);
         double amountInDouble=Double.parseDouble(amount);
+
+        TransactionUtil.validateTransactionAmount(account,TransactionType.DEPOSIT,amountInDouble);
 
         Ledger ledgerRecord = new Ledger();
         ledgerRecord.setAccount(account);
@@ -56,12 +61,15 @@ public class TransactionService {
         return amount;
     }
 
-    public String withdraw(String accountNo){
+    public String withdraw(String accountNo) throws ModuleException{
         Optional<Account> accountOptional = accountRepository.findByAccountNo(accountNo);
         Account account = accountOptional.get();
         IOUtil.printBanner("Please enter the amount to withdraw:");
         String amount = IOUtil.readInput();
+        IOUtil.validateAmountInput(amount);
         double amountInDouble=Double.parseDouble(amount);
+
+        TransactionUtil.validateTransactionAmount(account,TransactionType.WITHDRAW,amountInDouble);
 
         Ledger ledgerRecord = new Ledger();
         ledgerRecord.setAccount(account);

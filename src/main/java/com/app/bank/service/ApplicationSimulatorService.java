@@ -3,11 +3,14 @@ package com.app.bank.service;
 import com.app.bank.constant.OperationType;
 import com.app.bank.entity.Account;
 import com.app.bank.util.IOUtil;
+import com.app.bank.util.ModuleException;
 import com.app.bank.util.SimulatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static com.app.bank.constant.OperationType.PRINT_STATEMENT;
 
 @Service
 public class ApplicationSimulatorService {
@@ -24,42 +27,45 @@ public class ApplicationSimulatorService {
     public void simulateOperations(){
         simulatingAccount = new Account();
         simulatingAccount.setAccountNo("ACN00001");
+        IOUtil.printBanner("");
         displayInfoBanner();
         do {
             try {
                 performOperation();
                 displayInfoBanner();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (ModuleException e) {
+                IOUtil.printBanner(e.getMessage());
+                requestedOperation = null;
+                displayInfoBanner(Optional.of(PRINT_STATEMENT));
             }
         } while (!"Q".equalsIgnoreCase(requestedOperation));
     }
 
-    private void performOperation() throws Exception {
-        Optional<OperationType> operation = SimulatorUtil.getOperationType(IOUtil.readInput());
-        if(operation.isPresent()){
-            requestedOperation = operation.get().toString();
-            switch (operation.get()){
-                case DEPOSIT:
-                    transactionService.deposit(simulatingAccount.getAccountNo());
-                    return;
-                case WITHDRAW:
-                    transactionService.withdraw(simulatingAccount.getAccountNo());
-                    return;
-                case PRINT_STATEMENT:
-                    statementService.printStatement(simulatingAccount.getAccountNo());
-                    return;
-                case QUIT:
-                    System.out.println("quit");
-            }
-        } else {
-            throw new Exception();
+    private void performOperation() throws ModuleException {
+        String userInput = IOUtil.readInput();
+        if(!IOUtil.validateOperationCodeInput(userInput)){
+            throw new ModuleException("Invalid Operation Requested");
+        }
+        Optional<OperationType> operation = SimulatorUtil.getOperationType(userInput);
+        requestedOperation = operation.get().toString();
+        switch (operation.get()){
+            case DEPOSIT:
+                transactionService.deposit(simulatingAccount.getAccountNo());
+                return;
+            case WITHDRAW:
+                transactionService.withdraw(simulatingAccount.getAccountNo());
+                return;
+            case PRINT_STATEMENT:
+                statementService.printStatement(simulatingAccount.getAccountNo());
+                return;
         }
     }
 
     private void displayInfoBanner() {
-
         Optional<OperationType> operation = SimulatorUtil.getOperationType(requestedOperation);
+        displayInfoBanner(operation);
+    }
+    private void displayInfoBanner(Optional<OperationType> operation) {
 
         if(!operation.isPresent()) {
             IOUtil.printBanner("Welcome to AwesomeGIC Bank! What would you like to do?");
