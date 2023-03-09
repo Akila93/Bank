@@ -1,6 +1,7 @@
 package com.app.bank.service;
 
 import com.app.bank.constant.OperationType;
+import com.app.bank.entity.Account;
 import com.app.bank.util.IOUtil;
 import com.app.bank.util.SimulatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.util.Optional;
 public class ApplicationSimulatorService {
 
     private static String requestedOperation = null;
+    private static Account simulatingAccount;
 
     @Autowired
     TransactionService transactionService;
@@ -20,6 +22,8 @@ public class ApplicationSimulatorService {
     StatementService statementService;
 
     public void simulateOperations(){
+        simulatingAccount = new Account();
+        simulatingAccount.setAccountNo("ACN00001");
         displayInfoBanner();
         do {
             try {
@@ -37,13 +41,13 @@ public class ApplicationSimulatorService {
             requestedOperation = operation.get().toString();
             switch (operation.get()){
                 case DEPOSIT:
-                    transactionService.deposit();
+                    transactionService.deposit(simulatingAccount.getAccountNo());
                     return;
                 case WITHDRAW:
-                    transactionService.withdraw();
+                    transactionService.withdraw(simulatingAccount.getAccountNo());
                     return;
                 case PRINT_STATEMENT:
-                    statementService.printStatement();
+                    statementService.printStatement(simulatingAccount.getAccountNo());
                     return;
                 case QUIT:
                     System.out.println("quit");
