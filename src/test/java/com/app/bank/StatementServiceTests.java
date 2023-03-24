@@ -1,6 +1,6 @@
 package com.app.bank;
 
-import com.app.bank.service.TransactionService;
+import com.app.bank.service.StatementService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,25 +14,14 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class TransactionServiceTests {
+public class StatementServiceTests {
     @Autowired
-    private TransactionService transactionService;
+    private StatementService statementService;
 
     @Test
-    public void givenInvalidAccountNo_TryDeposit_WhenExceptionThrown_ThenAssertionSucceeds(){
+    public void givenInvalidAccountNo_TryPrintStatement_WhenExceptionThrown_ThenAssertionSucceeds(){
         NoSuchElementException exception  = assertThrows(NoSuchElementException.class,()->{
-            transactionService.deposit("wrongAccountNo");
-        });
-
-        String expectedMsg = "No value present";
-        String actualMsg = exception.getMessage();
-        assertTrue(actualMsg.contains(expectedMsg));
-    }
-
-    @Test
-    public void givenInvalidAccountNo_TryWithDraw_WhenExceptionThrown_ThenAssertionSucceeds(){
-        NoSuchElementException exception  = assertThrows(NoSuchElementException.class,()->{
-            transactionService.withdraw("wrongAccountNo");
+            statementService.printStatement("wrongAccountNo");
         });
 
         String expectedMsg = "No value present";
